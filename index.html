@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark"><meta name="theme-color" content="#2e7d32"><meta name="apple-mobile-web-app-capable" content="yes"><title>Ekim Takvimi</title>
+<style>
+:root{--bg:#f6f4ee;--card:#fff;--tx:#1f2a1f;--mu:#667066;--ac:#2e7d32;--bd:#dfe3d6;--wa:#b26a00;--bl:#1565c0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121712;--card:#1c241c;--tx:#e8efe6;--mu:#9aa89a;--ac:#66bb6a;--bd:#2c382c;--wa:#ffb74d;--bl:#64b5f6}}
+@media (prefers-color-scheme:dark){:root[data-theme="dark"]{--bg:#121712;--card:#1c241c;--tx:#e8efe6;--mu:#9aa89a;--ac:#66bb6a;--bd:#2c382c;--wa:#ffb74d;--bl:#64b5f6}}
+.row>div:nth-child(2){flex:1;min-width:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;padding:14px;max-width:640px;margin:auto}
+h1{font-size:20px;margin:4px 0 12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:12px}
+label{font-size:13px;color:var(--mu);display:block;margin:6px 0 3px}
+select,input{width:100%;font:inherit;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);box-sizing:border-box}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kv{background:var(--bg);border-radius:10px;padding:8px;font-size:14px}
+.kv b{display:block;font-size:12px;color:var(--mu);font-weight:500}
+.badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:13px;margin:6px 0}
+.ok{background:#2e7d3222;color:var(--ac)}.no{background:#b26a0022;color:var(--wa)}
+.row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--bd)}
+.row:first-child{border-top:0}
+.ic{font-size:24px;width:32px;text-align:center}
+.d{font-size:12px;color:var(--mu)}
+a.cal{margin-left:auto;white-space:nowrap;font-size:13px;color:var(--bl);text-decoration:none;border:1px solid var(--bl);border-radius:8px;padding:5px 8px}
+.h{color:var(--ac);font-weight:600}
+small{color:var(--mu)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{flex:1;padding:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit}.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.cd{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.cb{background:var(--bg);border-radius:12px;padding:8px}.cb b{display:block;font-size:11px;color:var(--mu);font-weight:500}.cb .n{font-size:20px;font-weight:700}.cb .s{font-size:12px;color:var(--mu)}
+.bar{height:6px;background:var(--bd);border-radius:9px;overflow:hidden;margin-top:10px}.bar i{display:block;height:100%;background:var(--ac)}
+button.sv{width:100%;padding:12px;border:0;border-radius:10px;background:var(--ac);color:#fff;font:inherit;font-weight:600;margin-bottom:12px}
+button.rm{margin-left:auto;border:0;background:none;color:var(--mu);font-size:13px}
+.hide{display:none}
+</style></head><body>
+<h1>🌱 Ekim Takvimi</h1>
+<div class="card"><label for="il">📍 İl</label><select id="il"></select><div class="grid"><div><label for="ic">İlçe</label><select id="ic"></select></div><div><label for="rk">Rakım (m)</label><input type="number" id="rk" min="0" max="3000" step="10" inputmode="numeric"></div></div><small id="ls"></small></div>
+<div class="tabs"><button id="t1" class="on">📋 Ekilenler</button><button id="t2">➕ Yeni</button><button id="t3">🧭 Bu ay</button></div>
+<div id="pg1"></div><div id="pg3" class="hide"></div>
+<div id="pg2" class="hide">
+<div class="card">
+<label for="c">Ürün</label><select id="c"></select>
+<label for="d">Ektiğiniz tarih</label><input type="date" id="d">
+</div>
+<div id="o"></div>
+<small>Uygun aylar, seçtiğiniz il/rakıma göre tahmin edilen aylık sıcaklıktan hesaplanır. Değerler genel tarım pratiğine dayalı yaklaşık değerlerdir; rakım ve mikro iklime göre ±2–3 hafta kayar. Kesin takvim için Ula İlçe Tarım ve Orman Müdürlüğü’ne danışın. Her satırdaki “Takvime ekle” bağlantısı etkinliği Google Takvim’e ekler; bildirim, takviminizin varsayılan hatırlatıcı ayarına göre gelir (isterseniz etkinlikte düzenleyin).</small></div>
+<script>
+const C=[
+{i:"🫘",n:"Bakla",m:[10,11],t:"5–15 °C",a:"5–20 °C",w:10,g:14,h:180,T:[[14,"Çıkışı kontrol et, boşları tamamla"],[45,"Ot al, bitki dibine toprak yığ"],[120,"Çiçek öncesi potasyumlu gübre"],[150,"Don riskinde örtü; yaprak biti kontrolü"]]},
+{i:"🫛",n:"Bezelye",m:[10,11,2],t:"5–18 °C",a:"8–18 °C",w:7,g:14,h:150,T:[[14,"Çıkışı kontrol et"],[30,"Destek çubuğu/tel çek"],[90,"Çiçeklenmede düzenli sula"],[120,"Hasat başlar; sık topla"]]},
+{i:"🧄",n:"Sarımsak",m:[10,11],t:"5–18 °C",a:"4–20 °C",w:10,g:21,h:220,T:[[21,"Çıkışı kontrol et"],[60,"Ot temizliği, malç"],[150,"Gübrelemeyi bitir"],[200,"Sulamayı kes; yapraklar sararınca sök, kurut"]]},
+{i:"🧅",n:"Arpacık soğan",m:[10,11],t:"5–18 °C",a:"5–20 °C",w:10,g:21,h:200,T:[[21,"Çıkışı kontrol et"],[60,"Ot temizliği"],[170,"Sulamayı kes, boyun yatınca sök"]]},
+{i:"🥬",n:"Ispanak",m:[9,10,11,2,3],t:"5–18 °C",a:"5–18 °C",w:4,g:10,h:55,T:[[10,"Fideleri 5–8 cm aralığa seyrelt"],[25,"Azotlu gübre ver"],[45,"Dış yapraklardan hasat"]]},
+{i:"🥗",n:"Roka",m:[9,10,11,2,3],t:"5–20 °C",a:"5–20 °C",w:3,g:6,h:40,T:[[15,"Seyrelt"],[30,"Kesip hasat; tekrar büyür"]]},
+{i:"🌱",n:"Turp",m:[9,10,11,3,4],t:"5–18 °C",a:"5–18 °C",w:3,g:5,h:35,T:[[10,"Seyrelt (3–4 cm)"],[28,"Düzenli sula (çatlamayı önler)"]]},
+{i:"🥬",n:"Marul",m:[9,10,2,3,4],t:"7–18 °C",a:"7–20 °C",w:4,g:7,h:65,T:[[10,"Seyrelt / fide dik"],[30,"Azotlu gübre"],[55,"Baş sıkılaşınca hasat"]]},
+{i:"🌿",n:"Pazı",m:[9,10,3,4],t:"8–20 °C",a:"8–22 °C",w:5,g:10,h:60,T:[[10,"Seyrelt"],[35,"Gübre ver"],[50,"Dış yapraklardan hasat"]]},
+{i:"🟤",n:"Mercimek",m:[11,2,3],t:"5–15 °C",a:"5–22 °C",w:14,g:14,h:200,T:[[14,"Çıkış kontrolü"],[60,"Ot temizliği"],[190,"Bakla sararınca hasat"]]},
+{i:"🟡",n:"Nohut",m:[11,3],t:"8–15 °C",a:"8–25 °C",w:14,g:14,h:210,T:[[14,"Çıkış kontrolü"],[70,"Ot temizliği"],[200,"Bitki sararınca hasat"]]},
+{i:"🍅",n:"Domates (fide)",m:[4,5],t:"15–25 °C",a:"15–30 °C",w:3,g:8,h:120,T:[[8,"Fide çıkışı; ışıklı yerde tut"],[50,"Dışarı dikim; gece >10 °C olmalı"],[70,"Destek ve koltuk alma"],[90,"Potasyumlu gübre"]]},
+{i:"🌶️",n:"Biber (fide)",m:[4,5],t:"18–28 °C",a:"18–30 °C",w:3,g:12,h:130,T:[[12,"Fide çıkışı"],[55,"Dışarı dikim"],[85,"Çiçeklenmede gübre"]]},
+{i:"🍆",n:"Patlıcan (fide)",m:[4,5],t:"18–28 °C",a:"20–30 °C",w:3,g:12,h:135,T:[[12,"Fide çıkışı"],[55,"Dışarı dikim"],[90,"Gübre ve destek"]]},
+{i:"🥒",n:"Salatalık",m:[5,6],t:"15–25 °C",a:"18–30 °C",w:2,g:6,h:60,T:[[6,"Çıkış kontrolü"],[20,"Tel/ip desteği"],[40,"Çiçeklenmede gübre"]]},
+{i:"🎃",n:"Kabak",m:[5,6],t:"15–25 °C",a:"18–30 °C",w:5,g:6,h:55,T:[[6,"Çıkış kontrolü"],[25,"Gübre ver"],[45,"Küçükken sık hasat"]]},
+{i:"🫘",n:"Taze fasulye",m:[5,6,7],t:"14–25 °C",a:"16–30 °C",w:4,g:8,h:60,T:[[8,"Çıkış kontrolü"],[20,"Ot al, toprak yığ"],[40,"Çiçeklenmede aşırı sulama yapma"]]},
+{i:"🌽",n:"Mısır",m:[4,5,6],t:"12–25 °C",a:"15–32 °C",w:5,g:8,h:90,T:[[8,"Çıkış kontrolü"],[25,"Azotlu gübre + ot"],[50,"Püskül döneminde sulamayı aksatma"]]}
+];
+const M=["","Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+const $=id=>document.getElementById(id);
+const Z={ak:[19,9.5],eg:[18,10],ma:[15,9.5],kd:[14.5,8.5],ia:[17,12],da:[17,12.5],gd:[20,12.5],ei:[17.5,11]};
+const P="Adana,ak,25;Adıyaman,gd,670;Afyonkarahisar,ei,1000;Ağrı,da,1640;Aksaray,ia,960;Amasya,kd,410;Ankara,ia,900;Antalya,ak,30;Ardahan,da,1830;Artvin,kd,600;Aydın,eg,60;Balıkesir,ma,110;Bartın,kd,10;Batman,gd,540;Bayburt,da,1550;Bilecik,ma,520;Bingöl,da,1150;Bitlis,da,1560;Bolu,kd,730;Burdur,ei,960;Bursa,ma,100;Çanakkale,ma,5;Çankırı,ia,730;Çorum,ia,800;Denizli,ei,350;Diyarbakır,gd,660;Düzce,kd,150;Edirne,ma,50;Elazığ,da,1000;Erzincan,da,1150;Erzurum,da,1900;Eskişehir,ia,790;Gaziantep,gd,850;Giresun,kd,10;Gümüşhane,da,1250;Hakkâri,da,1700;Hatay,ak,80;Iğdır,da,850;Isparta,ei,1000;İstanbul,ma,40;İzmir,eg,25;Kahramanmaraş,gd,570;Karabük,kd,300;Karaman,ia,1030;Kars,da,1750;Kastamonu,kd,800;Kayseri,ia,1050;Kilis,gd,640;Kırıkkale,ia,750;Kırklareli,ma,200;Kırşehir,ia,985;Kocaeli,ma,80;Konya,ia,1020;Kütahya,ei,930;Malatya,da,960;Manisa,eg,70;Mardin,gd,1000;Mersin,ak,10;Muğla,eg,660;Muş,da,1300;Nevşehir,ia,1230;Niğde,ia,1230;Ordu,kd,5;Osmaniye,ak,120;Rize,kd,5;Sakarya,ma,30;Samsun,kd,5;Siirt,gd,900;Sinop,kd,5;Sivas,ia,1300;Şanlıurfa,gd,520;Şırnak,gd,1000;Tekirdağ,ma,10;Tokat,ia,620;Trabzon,kd,5;Tunceli,da,950;Uşak,ei,920;Van,da,1720;Yalova,ma,5;Yozgat,ia,1300;Zonguldak,kd,10".split(";").map(x=>{const a=x.split(",");return[a[0],a[1],+a[2]]});
+const D={"Antalya":"Merkez,30;Akseki,1000;Alanya,5;Demre,5;Elmalı,1100;Finike,5;Gazipaşa,20;Gündoğmuş,1000;İbradı,1000;Kaş,5;Kemer,5;Korkuteli,900;Kumluca,10;Manavgat,10;Serik,10","Muğla":"Menteşe (Merkez),660;Bodrum,10;Dalaman,10;Datça,20;Fethiye,10;Kavaklıdere,700;Köyceğiz,20;Marmaris,10;Milas,60;Ortaca,10;Seydikemer,100;Ula,650;Yatağan,400"};
+let LC={il:0,ic:0,r:0};
+const T=m=>{const q=Z[P[LC.il][1]];return q[0]-LC.r*.006+q[1]*Math.cos((m-7)*Math.PI/6)};
+function suit(x,m){const A=x.a.match(/\d+/g).map(Number),B=x.t.match(/\d+/g).map(Number),lo=Math.max(A[0],B[0]-3),hi=Math.min(A[1],B[1]+5),n=Math.ceil(x.h/30)+1,v=T(m);if(v<lo||v>hi)return false;let mx=-99,mn=99;for(let i=0;i<n;i++){const w=T((m-1+i)%12+1);if(i<n-2||A[0]>=9)mx=Math.max(mx,w);mn=Math.min(mn,w)}return A[0]<9?mx<=A[1]+3&&mn>=A[0]-(x.h>=150?9:5):mn>=10}
+const sm=x=>[1,2,3,4,5,6,7,8,9,10,11,12].filter(m=>suit(x,m));
+function fil(){const p=P[LC.il],d=D[p[0]]?D[p[0]].split(";").map(e=>e.split(",")):[["İl merkezi civarı",p[2]]];$("ic").innerHTML=d.map(e=>'<option value="'+e[1]+'">'+e[0]+'</option>').join("")+'<option value="">Diğer / rakımı elle gir</option>'}
+function onIl(){LC.il=+$("il").value;fil();onIc()}
+function onIc(){const v=$("ic").value;if(v!=="")$("rk").value=v;onRk()}
+function onRk(){LC.ic=$("ic").selectedIndex;LC.r=Math.max(0,+$("rk").value||0);try{localStorage.setItem("ekimYer",JSON.stringify([LC.il,LC.ic,LC.r]))}catch(e){}
+$("ls").textContent="Tahmini ortalama sıcaklık: Ocak "+T(1).toFixed(0)+" °C · Temmuz "+T(7).toFixed(0)+" °C. İklim bölgesi ve rakımdan hesaplanan yaklaşık değerdir; arazinizin rakımını elle girebilirsiniz.";go();if(!$("pg3").classList.contains("hide"))now()}
+function initLoc(){let s=null;try{s=JSON.parse(localStorage.getItem("ekimYer"))}catch(e){}
+$("il").innerHTML=P.map((p,k)=>'<option value="'+k+'">'+p[0]+'</option>').join("");
+LC.il=s&&P[s[0]]?s[0]:P.findIndex(p=>p[0]=="Muğla");$("il").value=LC.il;fil();
+if(s&&P[s[0]]){$("ic").selectedIndex=Math.min(s[1],$("ic").options.length-1);$("rk").value=s[2];onRk()}else{$("ic").selectedIndex=[...$("ic").options].findIndex(o=>o.text=="Ula");onIc()}
+$("il").onchange=onIl;$("ic").onchange=onIc;$("rk").oninput=()=>{$("ic").selectedIndex=$("ic").options.length-1;onRk()}}
+function now(){const m=new Date().getMonth()+1,n=m%12+1,A=C.map((x,k)=>[x,k]),a=A.filter(e=>suit(e[0],m)),nx=A.filter(e=>!suit(e[0],m)&&suit(e[0],n));
+$("pg3").innerHTML='<div class="card"><b>🧭 '+M[m]+' ayında bu konumda ekilebilecekler</b>'+(a.length?a.map(e=>'<div class="row"><div class="ic">'+e[0].i+'</div><div><b>'+e[0].n+'</b><div class="d">Hasat ~'+e[0].h+' gün · çimlenme ~'+e[0].g+' gün</div></div><button class="rm" data-k="'+e[1]+'">Plan →</button></div>').join(""):'<div class="d">Bu ay açık havada uygun ürün yok; sera veya fide düşünün.</div>')+'</div>'+(nx.length?'<div class="card"><b>⏭️ '+M[n]+' ayında başlayacaklar</b><div class="d">'+nx.map(e=>e[0].i+" "+e[0].n).join(", ")+'</div></div>':"");
+$("pg3").querySelectorAll("[data-k]").forEach(e=>e.onclick=()=>{$("c").value=e.dataset.k;tab(2);go()})}
+$("c").innerHTML=C.map((x,k)=>`<option value="${k}">${x.i} ${x.n}</option>`).join("");
+const t0=new Date();$("d").value=t0.getFullYear()+"-"+String(t0.getMonth()+1).padStart(2,"0")+"-"+String(t0.getDate()).padStart(2,"0");
+const ymd=d=>d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+const fmt=d=>d.toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"});
+function link(txt,det,s,rec){const e=new Date(s.getFullYear(),s.getMonth(),s.getDate()+1);
+return `<a class="cal" target="_blank" rel="noopener" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(txt)}&details=${encodeURIComponent(det)}&dates=${ymd(s)}/${ymd(e)}${rec?"&recur="+encodeURIComponent(rec):""}">🔔 Takvime ekle</a>`}
+function go(){
+const x=C[+$("c").value],p=$("d").value.split("-").map(Number);if(p.length<3||!p[0]){$("o").innerHTML="";return}
+const b=new Date(p[0],p[1]-1,p[2]),at=n=>new Date(b.getFullYear(),b.getMonth(),b.getDate()+n);
+const ok=suit(x,b.getMonth()+1);
+const ev=[[0,"🌱","Ekim/dikim günü","Tohum veya fideyi ek, ilk sulamayı yap."],[x.g,"👀","Çıkış beklenir","Çimlenme ortalama "+x.g+" gün."]];
+x.T.forEach(a=>ev.push([a[0],"🛠️",a[1],a[1]]));
+ev.push([x.h,"🧺","HASAT ZAMANI","Yaklaşık hasat penceresi başlar."]);
+ev.sort((a,c)=>a[0]-c[0]);
+const sk=x.T.find(a=>a[1].startsWith("Sulamayı kes")),wEnd=sk?sk[0]:Math.max(x.g+7,x.h-10),cnt=Math.max(1,Math.floor((wEnd-1)/x.w));
+let h=`<div class="card"><div style="font-size:34px">${x.i}</div><b>${x.n}</b><br>
+<span class="badge ${ok?"ok":"no"}">${ok?"✅ Bu tarih uygun ekim dönemi":"⚠️ Bu konumda uygun dönem: "+(sm(x).map(k=>M[k]).join(", ")||"açık havada yok (sera/fide gerekir)")}</span>
+<div class="grid"><div class="kv"><b>🌡️ Toprak sıcaklığı</b>${x.t}</div><div class="kv"><b>☀️ Hava sıcaklığı</b>${x.a}</div>
+<div class="kv"><b>💧 Sulama aralığı</b>${x.w} günde bir*</div><div class="kv"><b>⏱️ Çimlenme</b>~${x.g} gün</div></div>
+<div class="kv" style="margin-top:8px"><b>🧺 Tahmini hasat</b><span class="h">${fmt(at(x.h))}</span> (${x.h} gün sonra)</div>
+<small>*Yağışlı günlerde sulamayı atla; kışın toprak nemini kontrol et.</small></div>
+<div class="card"><b>📅 Plan</b>`;
+h+=`<div class="row"><div class="ic">💧</div><div><b>Sulama periyodu</b><div class="d">${fmt(at(1))} → ${fmt(at(wEnd))} · her ${x.w} günde bir</div></div>${link(x.n+" sulama","Her "+x.w+" günde bir sula (yağış varsa atla).",at(1),"RRULE:FREQ=DAILY;INTERVAL="+x.w+";COUNT="+cnt)}</div>`;
+ev.forEach(e=>{h+=`<div class="row"><div class="ic">${e[1]}</div><div><b>${e[2]}</b><div class="d">${fmt(at(e[0]))} · ${e[0]===0?"bugün":e[0]+". gün"}</div></div>${link(x.n+": "+e[2],e[3],at(e[0]))}</div>`});
+$("o").innerHTML=h+"</div><button class=\"sv\" id=\"sv\">💾 Ekildi, listeme kaydet</button>";$("sv").onclick=()=>save(+$("c").value,$("d").value);}
+const K="ekimListe";let mem=[];
+function ld(){try{return JSON.parse(localStorage.getItem(K))||mem}catch(e){return mem}}
+function put(a){mem=a;try{localStorage.setItem(K,JSON.stringify(a))}catch(e){}}
+function save(c,d){const a=ld().slice();a.push({c,d,id:Date.now()});put(a);tab(1)}
+function tab(n){[1,2,3].forEach(i=>{$("pg"+i).classList.toggle("hide",n!==i);$("t"+i).classList.toggle("on",n===i)});if(n===1)list();if(n===3)now()}
+function list(){const a=ld().slice().sort((p,q)=>p.d<q.d?-1:1);
+if(!a.length){$("pg1").innerHTML='<div class="card">Henüz ekim kaydı yok. “Yeni ekim” sekmesinden ürün ve tarih seçip kaydet.</div>';return}
+let h="";a.forEach(r=>{const x=C[r.c],p=r.d.split("-").map(Number),b=new Date(p[0],p[1]-1,p[2]),at=n=>new Date(b.getFullYear(),b.getMonth(),b.getDate()+n);
+const dn=Math.floor((Date.now()-b)/864e5);
+const st=[[0,"Ekim"],[x.g,"Çıkış kontrolü"]].concat(x.T).sort((u,v)=>u[0]-v[0]);
+const nx=st.find(s=>s[0]>=dn),pct=Math.min(100,Math.max(0,dn/x.h*100));
+h+=`<div class="card"><div class="row" style="border:0;padding:0"><div class="ic">${x.i}</div><div><b>${x.n}</b><div class="d">Ekim: ${fmt(b)} · ${dn<0?(-dn)+" gün sonra":dn+". gün"}</div></div><button class="rm" data-id="${r.id}">🗑️ Sil</button></div>
+<div class="cd"><div class="cb"><b>⏭️ SONRAKİ AŞAMA</b><div class="n" data-p="Bugün" data-t="${nx?at(nx[0]).getTime():0}">…</div><div class="s">${nx?nx[1]:"Tüm aşamalar tamam"}</div></div>
+<div class="cb"><b>🧺 HASADA KALAN</b><div class="n" data-p="Hasat zamanı! 🎉" data-t="${at(x.h).getTime()}">…</div><div class="s">${fmt(at(x.h))}</div></div></div>
+<div class="bar"><i style="width:${pct}%"></i></div></div>`});
+$("pg1").innerHTML=h+"<small>Kayıtlar bu cihazın tarayıcısında saklanır.</small>";
+$("pg1").querySelectorAll(".rm").forEach(e=>e.onclick=()=>{if(!confirm("Bu kayıt silinsin mi?"))return;put(ld().filter(z=>z.id!==+e.dataset.id));list()});tick()}
+function tick(){document.querySelectorAll("[data-t]").forEach(e=>{const t=+e.dataset.t;if(!t){e.textContent="—";return}const m=t-Date.now();if(m<=0){e.textContent=e.dataset.p;return}e.textContent=Math.floor(m/864e5)+"g "+Math.floor(m%864e5/36e5)+"sa "+Math.floor(m%36e5/6e4)+"dk"})}
+setInterval(tick,30000);
+$("t1").onclick=()=>tab(1);$("t2").onclick=()=>tab(2);
+$("c").onchange=go;$("d").onchange=go;$("t3").onclick=()=>tab(3);initLoc();tab(1);
+</script></body></html>
